@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_vestes
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: veste_connectee
+    ports:
+      - "5432:5432"
