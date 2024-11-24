@@ -1,0 +1,8 @@
+<h2>Liste des Capteurs</h2>
+<ul>
+  <li *ngFor="let capteur of capteurs">
+    <strong>Type:</strong> {{ capteur.type }} |
+    <strong>Emplacement:</strong> {{ capteur.emplacement }} |
+    <strong>Valeur:</strong> {{ capteur.valeur }}
+  </li>
+</ul>
