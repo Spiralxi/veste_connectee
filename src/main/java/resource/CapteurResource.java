@@ -79,4 +79,23 @@ public class CapteurResource {
 
         return capteur;
     }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public void deleteCapteur(@PathParam("id") Long id) {
+        Capteur capteur = Capteur.findById(id);
+        if (capteur == null) {
+            throw new WebApplicationException("Capteur avec l'ID " + id + " non trouvé.", 404);
+        }
+        capteur.delete();
+
+        try {
+            // Diffuser un message via WebSocket indiquant qu'un capteur a été supprimé
+            String jsonMessage = String.format("{\"message\": \"Capteur avec ID %d supprimé.\"}", id);
+            capteurWebSocket.broadcast(jsonMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
