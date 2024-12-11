@@ -4,5 +4,7 @@
     <strong>Type:</strong> {{ capteur.type }} |
     <strong>Emplacement:</strong> {{ capteur.emplacement }} |
     <strong>Valeur:</strong> {{ capteur.valeur }}
+    <span *ngIf="capteur.type === 'Température'">°C</span>
+    <span *ngIf="capteur.type === 'Humidité'">%</span>
   </li>
 </ul>
