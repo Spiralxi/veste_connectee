@@ -6,5 +6,6 @@
     <strong>Valeur:</strong> {{ capteur.valeur }}
     <span *ngIf="capteur.type === 'Température'">°C</span>
     <span *ngIf="capteur.type === 'Humidité'">%</span>
+    <span *ngIf="capteur.type === 'Qualité de l\'air'">%</span>
   </li>
 </ul>
