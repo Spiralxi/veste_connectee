@@ -1,0 +1,12 @@
+* [33mdf09caa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mallan[m[33m, [m[1;31morigin/Branche-Erwan[m[33m, [m[1;32mBranche-Erwan[m[33m)[m 7. Ajout Qualité de l'air
+* [33m86853e9[m 7. Ajout humidité
+* [33mef19e91[m 6. Modif application.properties pour remplacer écoute en local par une ecoute sur toutes les interfaces réseau
+* [33m5778e69[m 5. Ajout opération DELETE API REST CRUD complètes (GET, POST, PUT, DELETE) pour l'API REST, avec diffusion des mises à jour via WebSocket.
+* [33mb1971e3[m 4. Ajout de la méthode PUT pour mettre à jour les informations d'un capteur via l'API REST.
+* [33m9c3f99b[m 3. Intégration des WebSockets pour la mise à jour en temps réel des capteurs dans l'interface. Correction des erreurs JSON et ajout de nouvelles données de capteurs.
+* [33mf1877be[m Connexion Backend-Frontend : "Connexion entre Angular et Quarkus pour les capteurs"
+* [33md4519b1[m 2. Ajout des endpoints REST pour la gestion des capteurs.
+* [33mbfec8f3[m Test communication avec la BDD (POST et GET): Ajout et affichage Agent dans BDD fonctionnel (fausses data)
+* [33m7d3b12a[m 1.Vérification et Configuration Initiale de Quarkus et PostgreSQL (Backend)
+* [33m836d653[m Test création branche Erwan
+* [33m07fd36b[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m commit test
