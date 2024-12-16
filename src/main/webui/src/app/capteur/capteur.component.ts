@@ -32,22 +32,19 @@ export class CapteurComponent implements OnInit {
   public lineChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: {
-      duration: 1000,
-      easing: 'easeInOutCubic'
-    },
+    animation: false, // Désactiver complètement les animations
     scales: {
       x: {
         type: 'category',
         ticks: {
           autoSkip: true,
-          maxRotation: 0
-        }
+          maxRotation: 0,
+        },
       },
       y: {
-        beginAtZero: true
-      }
-    }
+        beginAtZero: true,
+      },
+    },
   };
 
   public lineChartType: ChartType = 'line';
@@ -86,13 +83,15 @@ export class CapteurComponent implements OnInit {
       const end = new Date(this.endDate).getTime();
 
       if (isNaN(start) || isNaN(end)) {
-        console.warn("Dates invalides, utilisez le widget de sélection de date/heure.");
+        console.warn(
+          'Dates invalides, utilisez le widget de sélection de date/heure.'
+        );
         filteredPoints = [];
       } else if (start > end) {
         console.warn('La date de début est supérieure à la date de fin.');
         filteredPoints = [];
       } else {
-        filteredPoints = this.allDataPoints.filter(p => {
+        filteredPoints = this.allDataPoints.filter((p) => {
           const t = p.time.getTime();
           return t >= start && t <= end;
         });
