@@ -1,93 +1,113 @@
 import { Component, OnInit } from '@angular/core';
-import { CapteurService } from '../capteur.service';
+import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 
-interface Capteur {
-  id?: number;
-  type: string;
-  emplacement: string;
-  valeur: number;
+interface DataPoint {
+  time: Date;
+  value: number;
 }
 
 @Component({
   selector: 'app-capteur',
   templateUrl: './capteur.component.html',
-  styleUrls: ['./capteur.component.css']
+  styleUrls: ['./capteur.component.css'],
 })
 export class CapteurComponent implements OnInit {
+  private allDataPoints: DataPoint[] = [];
+  private maxPoints = 50; // Nombre maximum de points conservés
 
-  capteurs: Capteur[] = [];
-  private websocket!: WebSocket;
-  chartData: any[] = []; // Données pour le graphique
+  public lineChartData: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [],
+        label: 'Température',
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        borderColor: 'rgba(75,192,192,1)',
+        fill: 'origin',
+        tension: 0.4, // Ligne arrondie
+      },
+    ],
+    labels: [],
+  };
 
-  constructor(private capteurService: CapteurService) { }
+  public lineChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1000,
+      easing: 'easeInOutCubic'
+    },
+    scales: {
+      x: {
+        type: 'category',
+        ticks: {
+          autoSkip: true,
+          maxRotation: 0
+        }
+      },
+      y: {
+        beginAtZero: true
+      }
+    }
+  };
+
+  public lineChartType: ChartType = 'line';
+
+  public startDate?: string;
+  public endDate?: string;
 
   ngOnInit(): void {
-    this.getCapteurs();
-    this.initializeWebSocketConnection();
-    this.simulateTemperatureData(); // Simulation de données fictives pour les tests
+    // Mise à jour toutes les 5 secondes
+    setInterval(() => this.addDataPoint(), 5000);
   }
 
-  getCapteurs(): void {
-    this.capteurService.getCapteurs().subscribe(
-      (data) => {
-        this.capteurs = data;
-      },
-      (error) => {
-        console.error('Erreur lors de la récupération des capteurs', error);
-      }
-    );
-  }
+  private addDataPoint(): void {
+    const newValue = this.getRandomValue();
+    const currentTime = new Date();
 
-  initializeWebSocketConnection(): void {
-    this.websocket = new WebSocket('ws://localhost:8080/capteurs-ws');
+    this.allDataPoints.push({ time: currentTime, value: newValue });
 
-    this.websocket.onmessage = (event) => {
-      console.log('Message reçu via WebSocket:', event.data);
-      const newData: Capteur = JSON.parse(event.data);
-      this.updateCapteur(newData);
-      this.updateChartData(newData); // Mise à jour des données pour le graphique
-    };
-
-    this.websocket.onerror = (event) => {
-      console.error('Erreur de WebSocket:', event);
-    };
-  }
-
-  // Méthode pour mettre à jour ou ajouter un capteur
-  updateCapteur(newData: Capteur): void {
-    const index = this.capteurs.findIndex(capteur => capteur.id === newData.id);
-    if (index !== -1) {
-      // Si trouvé, mettre à jour les données
-      this.capteurs[index] = newData;
-    } else {
-      // Sinon, ajouter le nouveau capteur
-      this.capteurs.push(newData);
+    // Si le nombre de points dépasse maxPoints, on enlève le plus ancien
+    if (this.allDataPoints.length > this.maxPoints) {
+      this.allDataPoints.shift();
     }
+
+    this.applyCustomFilter();
   }
 
-  // Simulation de données pour la température
-  simulateTemperatureData(): void {
-    setInterval(() => {
-      const simulatedValue = (Math.random() * (30 - 20) + 20).toFixed(1); // Température aléatoire entre 20 et 30°C
-      const simulatedCapteur: Capteur = {
-        type: 'Température',
-        emplacement: 'Torse',
-        valeur: parseFloat(simulatedValue)
-      };
-
-      console.log('Simulation de température:', simulatedCapteur);
-      this.capteurs.push(simulatedCapteur);
-      this.updateChartData(simulatedCapteur); // Mettre à jour les données du graphique
-    }, 1000); // Intervalle : 1 seconde
+  private getRandomValue(): number {
+    return Math.floor(Math.random() * (35 - 20 + 1)) + 20;
   }
 
-  // Mise à jour des données pour les graphiques
-  updateChartData(capteur: Capteur): void {
-    if (capteur.type === 'Température') {
-      this.chartData.push({ name: new Date().toLocaleTimeString(), value: capteur.valeur });
-      if (this.chartData.length > 10) {
-        this.chartData.shift(); // Limite à 10 dernières valeurs
+  public applyCustomFilter(): void {
+    let filteredPoints = this.allDataPoints;
+
+    if (this.startDate && this.endDate) {
+      const start = new Date(this.startDate).getTime();
+      const end = new Date(this.endDate).getTime();
+
+      if (isNaN(start) || isNaN(end)) {
+        console.warn("Dates invalides, utilisez le widget de sélection de date/heure.");
+        filteredPoints = [];
+      } else if (start > end) {
+        console.warn('La date de début est supérieure à la date de fin.');
+        filteredPoints = [];
+      } else {
+        filteredPoints = this.allDataPoints.filter(p => {
+          const t = p.time.getTime();
+          return t >= start && t <= end;
+        });
       }
     }
+
+    this.lineChartData = {
+      ...this.lineChartData,
+      datasets: [
+        {
+          ...this.lineChartData.datasets[0],
+          data: filteredPoints.map((p) => p.value),
+        },
+      ],
+      labels: filteredPoints.map((p) => p.time.toLocaleTimeString()),
+    };
   }
 }
