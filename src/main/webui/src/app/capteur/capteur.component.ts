@@ -3,7 +3,9 @@ import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 
 interface DataPoint {
   time: Date;
-  value: number;
+  temperature: number;
+  humidity: number;
+  noise: number;
 }
 
 @Component({
@@ -12,12 +14,10 @@ interface DataPoint {
   styleUrls: ['./capteur.component.css'],
 })
 export class CapteurComponent implements OnInit {
-  private allTemperatureData: DataPoint[] = [];
-  private allHumidityData: DataPoint[] = [];
+  private allDataPoints: DataPoint[] = [];
   private maxPoints = 50; // Nombre maximum de points conservés
 
-  // Données pour le graphique de température
-  public lineChartTemperatureData: ChartConfiguration['data'] = {
+  public lineChartDataTemperature: ChartConfiguration['data'] = {
     datasets: [
       {
         data: [],
@@ -25,22 +25,35 @@ export class CapteurComponent implements OnInit {
         backgroundColor: 'rgba(75,192,192,0.2)',
         borderColor: 'rgba(75,192,192,1)',
         fill: 'origin',
-        tension: 0.4, // Ligne arrondie
+        tension: 0.4,
       },
     ],
     labels: [],
   };
 
-  // Données pour le graphique d'humidité
-  public lineChartHumidityData: ChartConfiguration['data'] = {
+  public lineChartDataHumidity: ChartConfiguration['data'] = {
     datasets: [
       {
         data: [],
         label: 'Humidité',
-        backgroundColor: 'rgba(54,162,235,0.2)',
-        borderColor: 'rgba(54,162,235,1)',
+        backgroundColor: 'rgba(192,75,192,0.2)',
+        borderColor: 'rgba(192,75,192,1)',
         fill: 'origin',
-        tension: 0.4, // Ligne arrondie
+        tension: 0.4,
+      },
+    ],
+    labels: [],
+  };
+
+  public lineChartDataNoise: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [],
+        label: 'Bruit',
+        backgroundColor: 'rgba(192,192,75,0.2)',
+        borderColor: 'rgba(192,192,75,1)',
+        fill: 'origin',
+        tension: 0.4,
       },
     ],
     labels: [],
@@ -49,7 +62,7 @@ export class CapteurComponent implements OnInit {
   public lineChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: false, // Désactiver complètement les animations
+    animation: false, // Désactiver les animations
     scales: {
       x: {
         type: 'category',
@@ -70,100 +83,121 @@ export class CapteurComponent implements OnInit {
   public temperatureEndDate?: string;
   public humidityStartDate?: string;
   public humidityEndDate?: string;
+  public noiseStartDate?: string;
+  public noiseEndDate?: string;
 
   ngOnInit(): void {
-    // Mise à jour toutes les 5 secondes pour la température
-    setInterval(() => this.addTemperatureDataPoint(), 5000);
-
-    // Mise à jour toutes les 5 secondes pour l'humidité
-    setInterval(() => this.addHumidityDataPoint(), 5000);
+    // Mise à jour toutes les 5 secondes
+    setInterval(() => this.addDataPoint(), 5000);
   }
 
-  private addTemperatureDataPoint(): void {
-    const newValue = this.getRandomTemperatureValue();
+  private addDataPoint(): void {
+    const newTemperature = this.getRandomValue(20, 35);
+    const newHumidity = this.getRandomValue(30, 70);
+    const newNoise = this.getRandomValue(40, 100);
     const currentTime = new Date();
 
-    this.allTemperatureData.push({ time: currentTime, value: newValue });
+    this.allDataPoints.push({
+      time: currentTime,
+      temperature: newTemperature,
+      humidity: newHumidity,
+      noise: newNoise,
+    });
 
-    if (this.allTemperatureData.length > this.maxPoints) {
-      this.allTemperatureData.shift();
+    if (this.allDataPoints.length > this.maxPoints) {
+      this.allDataPoints.shift();
     }
 
-    this.applyTemperatureFilter();
+    this.applyCustomFilter('temperature');
+    this.applyCustomFilter('humidity');
+    this.applyCustomFilter('noise');
   }
 
-  private addHumidityDataPoint(): void {
-    const newValue = this.getRandomHumidityValue();
-    const currentTime = new Date();
+  private getRandomValue(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    this.allHumidityData.push({ time: currentTime, value: newValue });
+  public applyCustomFilter(type: 'temperature' | 'humidity' | 'noise'): void {
+    let filteredPoints = this.allDataPoints;
 
-    if (this.allHumidityData.length > this.maxPoints) {
-      this.allHumidityData.shift();
+    let startDate: number | undefined;
+    let endDate: number | undefined;
+
+    if (type === 'temperature') {
+      startDate = this.temperatureStartDate
+        ? new Date(this.temperatureStartDate).getTime()
+        : undefined;
+      endDate = this.temperatureEndDate
+        ? new Date(this.temperatureEndDate).getTime()
+        : undefined;
+    } else if (type === 'humidity') {
+      startDate = this.humidityStartDate
+        ? new Date(this.humidityStartDate).getTime()
+        : undefined;
+      endDate = this.humidityEndDate
+        ? new Date(this.humidityEndDate).getTime()
+        : undefined;
+    } else if (type === 'noise') {
+      startDate = this.noiseStartDate
+        ? new Date(this.noiseStartDate).getTime()
+        : undefined;
+      endDate = this.noiseEndDate
+        ? new Date(this.noiseEndDate).getTime()
+        : undefined;
     }
 
-    this.applyHumidityFilter();
-  }
-
-  private getRandomTemperatureValue(): number {
-    return Math.floor(Math.random() * (35 - 20 + 1)) + 20; // Température entre 20 et 35
-  }
-
-  private getRandomHumidityValue(): number {
-    return Math.floor(Math.random() * (100 - 30 + 1)) + 30; // Humidité entre 30% et 100%
-  }
-
-  public applyTemperatureFilter(): void {
-    let filteredPoints = this.allTemperatureData;
-
-    if (this.temperatureStartDate && this.temperatureEndDate) {
-      const start = new Date(this.temperatureStartDate).getTime();
-      const end = new Date(this.temperatureEndDate).getTime();
-
-      if (!isNaN(start) && !isNaN(end) && start <= end) {
-        filteredPoints = this.allTemperatureData.filter((p) => {
-          const t = p.time.getTime();
-          return t >= start && t <= end;
-        });
-      }
+    if (startDate !== undefined && endDate !== undefined) {
+      filteredPoints = this.allDataPoints.filter((p) => {
+        const t = p.time.getTime();
+        return t >= (startDate ?? 0) && t <= (endDate ?? Infinity);
+      });
     }
 
-    this.lineChartTemperatureData = {
-      ...this.lineChartTemperatureData,
-      datasets: [
-        {
-          ...this.lineChartTemperatureData.datasets[0],
-          data: filteredPoints.map((p) => p.value),
-        },
-      ],
-      labels: filteredPoints.map((p) => p.time.toLocaleTimeString()),
-    };
-  }
+    const chartData = filteredPoints.map((p) =>
+      type === 'temperature'
+        ? p.temperature
+        : type === 'humidity'
+        ? p.humidity
+        : p.noise
+    );
 
-  public applyHumidityFilter(): void {
-    let filteredPoints = this.allHumidityData;
+    const chartLabels = filteredPoints.map((p) =>
+      p.time.toLocaleTimeString()
+    );
 
-    if (this.humidityStartDate && this.humidityEndDate) {
-      const start = new Date(this.humidityStartDate).getTime();
-      const end = new Date(this.humidityEndDate).getTime();
-
-      if (!isNaN(start) && !isNaN(end) && start <= end) {
-        filteredPoints = this.allHumidityData.filter((p) => {
-          const t = p.time.getTime();
-          return t >= start && t <= end;
-        });
-      }
+    if (type === 'temperature') {
+      this.lineChartDataTemperature = {
+        ...this.lineChartDataTemperature,
+        datasets: [
+          {
+            ...this.lineChartDataTemperature.datasets[0],
+            data: chartData,
+          },
+        ],
+        labels: chartLabels,
+      };
+    } else if (type === 'humidity') {
+      this.lineChartDataHumidity = {
+        ...this.lineChartDataHumidity,
+        datasets: [
+          {
+            ...this.lineChartDataHumidity.datasets[0],
+            data: chartData,
+          },
+        ],
+        labels: chartLabels,
+      };
+    } else if (type === 'noise') {
+      this.lineChartDataNoise = {
+        ...this.lineChartDataNoise,
+        datasets: [
+          {
+            ...this.lineChartDataNoise.datasets[0],
+            data: chartData,
+          },
+        ],
+        labels: chartLabels,
+      };
     }
-
-    this.lineChartHumidityData = {
-      ...this.lineChartHumidityData,
-      datasets: [
-        {
-          ...this.lineChartHumidityData.datasets[0],
-          data: filteredPoints.map((p) => p.value),
-        },
-      ],
-      labels: filteredPoints.map((p) => p.time.toLocaleTimeString()),
-    };
   }
 }

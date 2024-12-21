@@ -1,5 +1,5 @@
 <div class="chart-container">
-  <!-- Graphique de la température -->
+  <!-- Température -->
   <h2>Évolution de la Température en Temps Réel</h2>
   <div class="filters">
     <label for="temperature-start-date">Date de début :</label>
@@ -7,29 +7,26 @@
       id="temperature-start-date"
       type="datetime-local"
       [(ngModel)]="temperatureStartDate"
-      (change)="applyTemperatureFilter()"
+      (change)="applyCustomFilter('temperature')"
     />
-
     <label for="temperature-end-date">Date de fin :</label>
     <input
       id="temperature-end-date"
       type="datetime-local"
       [(ngModel)]="temperatureEndDate"
-      (change)="applyTemperatureFilter()"
+      (change)="applyCustomFilter('temperature')"
     />
   </div>
   <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
     <canvas
       baseChart
-      [data]="lineChartTemperatureData"
+      [data]="lineChartDataTemperature"
       [options]="lineChartOptions"
       [type]="lineChartType"
     ></canvas>
   </div>
-</div>
 
-<div class="chart-container">
-  <!-- Graphique de l'humidité -->
+  <!-- Humidité -->
   <h2>Évolution de l'Humidité en Temps Réel</h2>
   <div class="filters">
     <label for="humidity-start-date">Date de début :</label>
@@ -37,21 +34,47 @@
       id="humidity-start-date"
       type="datetime-local"
       [(ngModel)]="humidityStartDate"
-      (change)="applyHumidityFilter()"
+      (change)="applyCustomFilter('humidity')"
     />
-
     <label for="humidity-end-date">Date de fin :</label>
     <input
       id="humidity-end-date"
       type="datetime-local"
       [(ngModel)]="humidityEndDate"
-      (change)="applyHumidityFilter()"
+      (change)="applyCustomFilter('humidity')"
     />
   </div>
   <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
     <canvas
       baseChart
-      [data]="lineChartHumidityData"
+      [data]="lineChartDataHumidity"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Bruit -->
+  <h2>Évolution du Bruit en Temps Réel</h2>
+  <div class="filters">
+    <label for="noise-start-date">Date de début :</label>
+    <input
+      id="noise-start-date"
+      type="datetime-local"
+      [(ngModel)]="noiseStartDate"
+      (change)="applyCustomFilter('noise')"
+    />
+    <label for="noise-end-date">Date de fin :</label>
+    <input
+      id="noise-end-date"
+      type="datetime-local"
+      [(ngModel)]="noiseEndDate"
+      (change)="applyCustomFilter('noise')"
+    />
+  </div>
+  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+    <canvas
+      baseChart
+      [data]="lineChartDataNoise"
       [options]="lineChartOptions"
       [type]="lineChartType"
     ></canvas>
