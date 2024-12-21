@@ -1,33 +1,59 @@
 <div class="chart-container">
+  <!-- Graphique de la température -->
   <h2>Évolution de la Température en Temps Réel</h2>
-
   <div class="filters">
-    <label for="start-date">Date de début :</label>
+    <label for="temperature-start-date">Date de début :</label>
     <input
-      id="start-date"
+      id="temperature-start-date"
       type="datetime-local"
-      [(ngModel)]="startDate"
-      (change)="applyCustomFilter()"
+      [(ngModel)]="temperatureStartDate"
+      (change)="applyTemperatureFilter()"
     />
 
-    <label for="end-date">Date de fin :</label>
+    <label for="temperature-end-date">Date de fin :</label>
     <input
-      id="end-date"
+      id="temperature-end-date"
       type="datetime-local"
-      [(ngModel)]="endDate"
-      (change)="applyCustomFilter()"
+      [(ngModel)]="temperatureEndDate"
+      (change)="applyTemperatureFilter()"
     />
   </div>
-
-  <div
-    style="position: relative; height: 400px; width: 100%; margin-top: 20px;"
-  >
+  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
     <canvas
       baseChart
-      [data]="lineChartData"
+      [data]="lineChartTemperatureData"
       [options]="lineChartOptions"
       [type]="lineChartType"
-    >
-    </canvas>
+    ></canvas>
+  </div>
+</div>
+
+<div class="chart-container">
+  <!-- Graphique de l'humidité -->
+  <h2>Évolution de l'Humidité en Temps Réel</h2>
+  <div class="filters">
+    <label for="humidity-start-date">Date de début :</label>
+    <input
+      id="humidity-start-date"
+      type="datetime-local"
+      [(ngModel)]="humidityStartDate"
+      (change)="applyHumidityFilter()"
+    />
+
+    <label for="humidity-end-date">Date de fin :</label>
+    <input
+      id="humidity-end-date"
+      type="datetime-local"
+      [(ngModel)]="humidityEndDate"
+      (change)="applyHumidityFilter()"
+    />
+  </div>
+  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+    <canvas
+      baseChart
+      [data]="lineChartHumidityData"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
   </div>
 </div>
