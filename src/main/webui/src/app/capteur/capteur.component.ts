@@ -17,6 +17,7 @@ export class CapteurComponent implements OnInit {
   private allDataPoints: DataPoint[] = [];
   private maxPoints = 50; // Nombre maximum de points conservés
 
+  // Données pour les diagrammes de température, humidité, bruit
   public lineChartDataTemperature: ChartConfiguration['data'] = {
     datasets: [
       {
@@ -59,6 +60,19 @@ export class CapteurComponent implements OnInit {
     labels: [],
   };
 
+  // Données pour le diagramme de la qualité de l'air
+  public gaugeChartDataAirQuality: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [50, 50], // Données initiales
+        backgroundColor: ['#8E44AD', '#EAEDED'],
+        hoverBackgroundColor: ['#8E44AD', '#EAEDED'],
+        borderWidth: 0,
+      },
+    ],
+    labels: ['Qualité de l\'air', 'Reste'],
+  };
+
   public lineChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -87,8 +101,11 @@ export class CapteurComponent implements OnInit {
   public noiseEndDate?: string;
 
   ngOnInit(): void {
-    // Mise à jour toutes les 5 secondes
-    setInterval(() => this.addDataPoint(), 5000);
+    // Mise à jour des données toutes les 5 secondes
+    setInterval(() => {
+      this.addDataPoint();
+      this.updateAirQualityData();
+    }, 5000);
   }
 
   private addDataPoint(): void {
@@ -111,6 +128,23 @@ export class CapteurComponent implements OnInit {
     this.applyCustomFilter('temperature');
     this.applyCustomFilter('humidity');
     this.applyCustomFilter('noise');
+  }
+
+  private updateAirQualityData(): void {
+    const newAirQuality = this.getRandomValue(0, 100); // Génère une valeur entre 0 et 100
+    console.log('Nouvelle qualité de l\'air :', newAirQuality); // Debug
+
+    this.gaugeChartDataAirQuality = {
+      datasets: [
+        {
+          data: [newAirQuality, 100 - newAirQuality],
+          backgroundColor: ['#8E44AD', '#EAEDED'],
+          hoverBackgroundColor: ['#8E44AD', '#EAEDED'],
+          borderWidth: 0,
+        },
+      ],
+      labels: ['Qualité de l\'air', 'Reste'],
+    };
   }
 
   private getRandomValue(min: number, max: number): number {

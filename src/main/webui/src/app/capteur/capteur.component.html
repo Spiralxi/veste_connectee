@@ -79,4 +79,15 @@
       [type]="lineChartType"
     ></canvas>
   </div>
+
+  <!-- Qualité de l'air -->
+  <h2>Qualité de l'Air (AQI)</h2>
+  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+    <canvas
+      baseChart
+      [data]="gaugeChartDataAirQuality"
+      [options]="{ responsive: true, maintainAspectRatio: false }"
+      [type]="'doughnut'"
+    ></canvas>
+  </div>
 </div>
