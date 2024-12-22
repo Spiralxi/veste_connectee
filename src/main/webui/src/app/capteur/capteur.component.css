@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 800px;
+  max-width: 100%;
   margin: auto;
   background-color: #f9f9f9;
   padding: 20px;
@@ -20,4 +20,29 @@
 
 canvas {
   max-width: 100%;
+}
+
+.chart {
+  width: 80%;
+  margin: 20px 0;
+}
+
+.gauge-chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: auto;
+  margin: 20px 0;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+body {
+  background-color: #ffffff;
+  font-family: Arial, sans-serif;
 }

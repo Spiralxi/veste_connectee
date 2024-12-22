@@ -17,7 +17,7 @@
       (change)="applyCustomFilter('temperature')"
     />
   </div>
-  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+  <div class="chart">
     <canvas
       baseChart
       [data]="lineChartDataTemperature"
@@ -44,7 +44,7 @@
       (change)="applyCustomFilter('humidity')"
     />
   </div>
-  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+  <div class="chart">
     <canvas
       baseChart
       [data]="lineChartDataHumidity"
@@ -71,7 +71,7 @@
       (change)="applyCustomFilter('noise')"
     />
   </div>
-  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+  <div class="chart">
     <canvas
       baseChart
       [data]="lineChartDataNoise"
@@ -81,11 +81,33 @@
   </div>
 
   <!-- Qualité de l'air -->
-  <h2>Qualité de l'Air (AQI)</h2>
-  <div style="position: relative; height: 400px; width: 100%; margin-top: 20px;">
+  <h2>Qualité de l'Air</h2>
+  <div class="gauge-chart">
     <canvas
       baseChart
       [data]="gaugeChartDataAirQuality"
+      [options]="{ responsive: true, maintainAspectRatio: false }"
+      [type]="'doughnut'"
+    ></canvas>
+  </div>
+
+  <!-- Signal ECG -->
+  <h2>Évolution du signal ECG</h2>
+  <div class="chart">
+    <canvas
+      baseChart
+      [data]="lineChartDataECG"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Fréquence cardiaque moyenne -->
+  <h2>Moyenne de la Fréquence Cardiaque (ECG)</h2>
+  <div class="gauge-chart">
+    <canvas
+      baseChart
+      [data]="gaugeChartDataECG"
       [options]="{ responsive: true, maintainAspectRatio: false }"
       [type]="'doughnut'"
     ></canvas>

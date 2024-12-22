@@ -6,6 +6,7 @@ interface DataPoint {
   temperature: number;
   humidity: number;
   noise: number;
+  ecg: number; // Données ECG
 }
 
 @Component({
@@ -17,7 +18,7 @@ export class CapteurComponent implements OnInit {
   private allDataPoints: DataPoint[] = [];
   private maxPoints = 50; // Nombre maximum de points conservés
 
-  // Données pour les diagrammes de température, humidité, bruit
+  // Données pour les diagrammes de ligne
   public lineChartDataTemperature: ChartConfiguration['data'] = {
     datasets: [
       {
@@ -60,11 +61,25 @@ export class CapteurComponent implements OnInit {
     labels: [],
   };
 
-  // Données pour le diagramme de la qualité de l'air
+  public lineChartDataECG: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [],
+        label: 'ECG',
+        backgroundColor: 'rgba(75,75,192,0.2)',
+        borderColor: 'rgba(75,75,192,1)',
+        fill: 'origin',
+        tension: 0.4,
+      },
+    ],
+    labels: [],
+  };
+
+  // Données pour les diagrammes circulaires
   public gaugeChartDataAirQuality: ChartConfiguration['data'] = {
     datasets: [
       {
-        data: [50, 50], // Données initiales
+        data: [50, 50],
         backgroundColor: ['#8E44AD', '#EAEDED'],
         hoverBackgroundColor: ['#8E44AD', '#EAEDED'],
         borderWidth: 0,
@@ -73,10 +88,22 @@ export class CapteurComponent implements OnInit {
     labels: ['Qualité de l\'air', 'Reste'],
   };
 
+  public gaugeChartDataECG: ChartConfiguration['data'] = {
+    datasets: [
+      {
+        data: [70, 30],
+        backgroundColor: ['#2E86C1', '#EAEDED'],
+        hoverBackgroundColor: ['#2E86C1', '#EAEDED'],
+        borderWidth: 0,
+      },
+    ],
+    labels: ['Fréquence moyenne ECG', 'Reste'],
+  };
+
   public lineChartOptions: ChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    animation: false, // Désactiver les animations
+    animation: false,
     scales: {
       x: {
         type: 'category',
@@ -99,12 +126,14 @@ export class CapteurComponent implements OnInit {
   public humidityEndDate?: string;
   public noiseStartDate?: string;
   public noiseEndDate?: string;
+  public ecgStartDate?: string;
+  public ecgEndDate?: string;
 
   ngOnInit(): void {
-    // Mise à jour des données toutes les 5 secondes
     setInterval(() => {
       this.addDataPoint();
       this.updateAirQualityData();
+      this.updateECGAverageData();
     }, 5000);
   }
 
@@ -112,6 +141,7 @@ export class CapteurComponent implements OnInit {
     const newTemperature = this.getRandomValue(20, 35);
     const newHumidity = this.getRandomValue(30, 70);
     const newNoise = this.getRandomValue(40, 100);
+    const newECG = this.getRandomValue(60, 100);
     const currentTime = new Date();
 
     this.allDataPoints.push({
@@ -119,6 +149,7 @@ export class CapteurComponent implements OnInit {
       temperature: newTemperature,
       humidity: newHumidity,
       noise: newNoise,
+      ecg: newECG,
     });
 
     if (this.allDataPoints.length > this.maxPoints) {
@@ -128,12 +159,11 @@ export class CapteurComponent implements OnInit {
     this.applyCustomFilter('temperature');
     this.applyCustomFilter('humidity');
     this.applyCustomFilter('noise');
+    this.applyCustomFilter('ecg');
   }
 
   private updateAirQualityData(): void {
-    const newAirQuality = this.getRandomValue(0, 100); // Génère une valeur entre 0 et 100
-    console.log('Nouvelle qualité de l\'air :', newAirQuality); // Debug
-
+    const newAirQuality = this.getRandomValue(0, 100);
     this.gaugeChartDataAirQuality = {
       datasets: [
         {
@@ -147,57 +177,79 @@ export class CapteurComponent implements OnInit {
     };
   }
 
+  private updateECGAverageData(): void {
+    const ecgValues = this.allDataPoints.map((p) => p.ecg);
+    const averageECG = ecgValues.reduce((a, b) => a + b, 0) / ecgValues.length || 0;
+
+    this.gaugeChartDataECG = {
+      datasets: [
+        {
+          data: [averageECG, 100 - averageECG],
+          backgroundColor: ['#2E86C1', '#EAEDED'],
+          hoverBackgroundColor: ['#2E86C1', '#EAEDED'],
+          borderWidth: 0,
+        },
+      ],
+      labels: ['Fréquence moyenne ECG', 'Reste'],
+    };
+  }
+
   private getRandomValue(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  public applyCustomFilter(type: 'temperature' | 'humidity' | 'noise'): void {
+  public applyCustomFilter(type: 'temperature' | 'humidity' | 'noise' | 'ecg'): void {
     let filteredPoints = this.allDataPoints;
 
-    let startDate: number | undefined;
-    let endDate: number | undefined;
+    let startDate: number = 0;
+    let endDate: number = Infinity;
 
     if (type === 'temperature') {
       startDate = this.temperatureStartDate
         ? new Date(this.temperatureStartDate).getTime()
-        : undefined;
+        : 0;
       endDate = this.temperatureEndDate
         ? new Date(this.temperatureEndDate).getTime()
-        : undefined;
+        : Infinity;
     } else if (type === 'humidity') {
       startDate = this.humidityStartDate
         ? new Date(this.humidityStartDate).getTime()
-        : undefined;
+        : 0;
       endDate = this.humidityEndDate
         ? new Date(this.humidityEndDate).getTime()
-        : undefined;
+        : Infinity;
     } else if (type === 'noise') {
       startDate = this.noiseStartDate
         ? new Date(this.noiseStartDate).getTime()
-        : undefined;
+        : 0;
       endDate = this.noiseEndDate
         ? new Date(this.noiseEndDate).getTime()
-        : undefined;
+        : Infinity;
+    } else if (type === 'ecg') {
+      startDate = this.ecgStartDate
+        ? new Date(this.ecgStartDate).getTime()
+        : 0;
+      endDate = this.ecgEndDate
+        ? new Date(this.ecgEndDate).getTime()
+        : Infinity;
     }
 
-    if (startDate !== undefined && endDate !== undefined) {
-      filteredPoints = this.allDataPoints.filter((p) => {
-        const t = p.time.getTime();
-        return t >= (startDate ?? 0) && t <= (endDate ?? Infinity);
-      });
-    }
+    filteredPoints = this.allDataPoints.filter((p) => {
+      const t = p.time.getTime();
+      return t >= startDate && t <= endDate;
+    });
 
     const chartData = filteredPoints.map((p) =>
       type === 'temperature'
         ? p.temperature
         : type === 'humidity'
         ? p.humidity
-        : p.noise
+        : type === 'noise'
+        ? p.noise
+        : p.ecg
     );
 
-    const chartLabels = filteredPoints.map((p) =>
-      p.time.toLocaleTimeString()
-    );
+    const chartLabels = filteredPoints.map((p) => p.time.toLocaleTimeString());
 
     if (type === 'temperature') {
       this.lineChartDataTemperature = {
@@ -227,6 +279,17 @@ export class CapteurComponent implements OnInit {
         datasets: [
           {
             ...this.lineChartDataNoise.datasets[0],
+            data: chartData,
+          },
+        ],
+        labels: chartLabels,
+      };
+    } else if (type === 'ecg') {
+      this.lineChartDataECG = {
+        ...this.lineChartDataECG,
+        datasets: [
+          {
+            ...this.lineChartDataECG.datasets[0],
             data: chartData,
           },
         ],
