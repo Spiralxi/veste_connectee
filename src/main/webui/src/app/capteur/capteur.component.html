@@ -1,13 +1,115 @@
-<h2>Liste des Capteurs</h2>
-<ul>
-  <li *ngFor="let capteur of capteurs">
-    <strong>Type:</strong> {{ capteur.type }} |
-    <strong>Emplacement:</strong> {{ capteur.emplacement }} |
-    <strong>Valeur:</strong> {{ capteur.valeur }}
-    <span *ngIf="capteur.type === 'Température'">°C</span>
-    <span *ngIf="capteur.type === 'Humidité'">%</span>
-    <span *ngIf="capteur.type === 'Qualité de l\'air'">%</span>
-    <span *ngIf="capteur.type === 'Bruit'">dB</span>
-    <span *ngIf="capteur.type === 'Electrocardiogramme'"> BPM</span>
-  </li>
-</ul>
+<div class="chart-container">
+  <!-- Température -->
+  <h2>Évolution de la Température en Temps Réel</h2>
+  <div class="filters">
+    <label for="temperature-start-date">Date de début :</label>
+    <input
+      id="temperature-start-date"
+      type="datetime-local"
+      [(ngModel)]="temperatureStartDate"
+      (change)="applyCustomFilter('temperature')"
+    />
+    <label for="temperature-end-date">Date de fin :</label>
+    <input
+      id="temperature-end-date"
+      type="datetime-local"
+      [(ngModel)]="temperatureEndDate"
+      (change)="applyCustomFilter('temperature')"
+    />
+  </div>
+  <div class="chart">
+    <canvas
+      baseChart
+      [data]="lineChartDataTemperature"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Humidité -->
+  <h2>Évolution de l'Humidité en Temps Réel</h2>
+  <div class="filters">
+    <label for="humidity-start-date">Date de début :</label>
+    <input
+      id="humidity-start-date"
+      type="datetime-local"
+      [(ngModel)]="humidityStartDate"
+      (change)="applyCustomFilter('humidity')"
+    />
+    <label for="humidity-end-date">Date de fin :</label>
+    <input
+      id="humidity-end-date"
+      type="datetime-local"
+      [(ngModel)]="humidityEndDate"
+      (change)="applyCustomFilter('humidity')"
+    />
+  </div>
+  <div class="chart">
+    <canvas
+      baseChart
+      [data]="lineChartDataHumidity"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Bruit -->
+  <h2>Évolution du Bruit en Temps Réel</h2>
+  <div class="filters">
+    <label for="noise-start-date">Date de début :</label>
+    <input
+      id="noise-start-date"
+      type="datetime-local"
+      [(ngModel)]="noiseStartDate"
+      (change)="applyCustomFilter('noise')"
+    />
+    <label for="noise-end-date">Date de fin :</label>
+    <input
+      id="noise-end-date"
+      type="datetime-local"
+      [(ngModel)]="noiseEndDate"
+      (change)="applyCustomFilter('noise')"
+    />
+  </div>
+  <div class="chart">
+    <canvas
+      baseChart
+      [data]="lineChartDataNoise"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Qualité de l'air -->
+  <h2>Qualité de l'Air</h2>
+  <div class="gauge-chart">
+    <canvas
+      baseChart
+      [data]="gaugeChartDataAirQuality"
+      [options]="{ responsive: true, maintainAspectRatio: false }"
+      [type]="'doughnut'"
+    ></canvas>
+  </div>
+
+  <!-- Signal ECG -->
+  <h2>Évolution du signal ECG</h2>
+  <div class="chart">
+    <canvas
+      baseChart
+      [data]="lineChartDataECG"
+      [options]="lineChartOptions"
+      [type]="lineChartType"
+    ></canvas>
+  </div>
+
+  <!-- Fréquence cardiaque moyenne -->
+  <h2>Moyenne de la Fréquence Cardiaque (ECG)</h2>
+  <div class="gauge-chart">
+    <canvas
+      baseChart
+      [data]="gaugeChartDataECG"
+      [options]="{ responsive: true, maintainAspectRatio: false }"
+      [type]="'doughnut'"
+    ></canvas>
+  </div>
+</div>

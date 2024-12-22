@@ -1,22 +1,25 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CapteurComponent } from './capteur/capteur.component';
 
+const routes: Routes = [
+  { path: '', component: CapteurComponent },
+];
+
 @NgModule({
-  declarations: [
-    AppComponent,
-    CapteurComponent
-  ],
+  declarations: [AppComponent, CapteurComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
+    FormsModule,
+    NgChartsModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
