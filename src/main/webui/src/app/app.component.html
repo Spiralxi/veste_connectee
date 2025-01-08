@@ -1,41 +1,72 @@
-<section class="hero">
-  <div class="hero-content">
-    <h1>Bienvenue sur la Veste Connectée</h1>
-    <p>Une technologie innovante pour une vie plus saine et connectée.</p>
-    <button class="cta">Découvrir les capteurs</button>
-  </div>
-</section>
-
-<nav class="nav">
-  <a routerLink="/">Accueil</a>
-  <a routerLink="/capteurs">Capteurs</a>
-  <a routerLink="/contact">Contact</a>
-</nav>
-
-<div class="content">
-  <section class="sensors">
-    <h2>Nos Capteurs</h2>
-    <div class="sensor-grid">
-      <div class="sensor">
-        <h3>Fréquence Cardiaque</h3>
-        <img src="bpm-icon.svg" alt="BPM" />
-        <p id="bpm-data">-- BPM</p>
-      </div>
-      <div class="sensor">
-        <h3>Température</h3>
-        <img src="temp-icon.svg" alt="Température" />
-        <p id="temp-data">-- °C</p>
-      </div>
-      <div class="sensor">
-        <h3>Qualité de l'Air (CO2)</h3>
-        <img src="co2-icon.svg" alt="CO2" />
-        <p id="co2-data">-- ppm</p>
-      </div>
-      <div class="sensor">
-        <h3>Niveau Sonore</h3>
-        <img src="sound-icon.svg" alt="Son" />
-        <p id="sound-data">-- dB</p>
-      </div>
+<div class="main-layout">
+  <header class="header">
+    <h1 (click)="goToHome()">Quinoa Capteurs</h1>
+    <div class="hamburger-menu" (click)="toggleMenu()">
+      <i class="fas fa-bars"></i>
     </div>
-  </section>
+    <nav class="nav-links">
+      <a href="#"><i class="fas fa-home"></i> Accueil</a>
+      <a href="#"><i class="fas fa-info-circle"></i> À propos</a>
+      <a href="#"><i class="fas fa-envelope"></i> Contact</a>
+    </nav>
+  </header>
+
+  <div class="content-wrapper">
+    <aside class="sidebar">
+      <h3>Capteurs</h3>
+      <ul>
+        <li>
+          <a (click)="selectCapteur('temperature')" [class.active]="selectedCapteur === 'temperature'">
+            <i class="fas fa-thermometer-half"></i> Température
+          </a>
+        </li>
+        <li>
+          <a (click)="selectCapteur('humidite')" [class.active]="selectedCapteur === 'humidite'">
+            <i class="fas fa-water"></i> Humidité
+          </a>
+        </li>
+        <li>
+          <a (click)="selectCapteur('bruit')" [class.active]="selectedCapteur === 'bruit'">
+            <i class="fas fa-volume-up"></i> Bruit
+          </a>
+        </li>
+        <li>
+          <a (click)="selectCapteur('qualiteAir')" [class.active]="selectedCapteur === 'qualiteAir'">
+            <i class="fas fa-wind"></i> Qualité de l'air
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <div class="content" *ngIf="selectedCapteur">
+      <h2>{{ selectedCapteurDetails?.title }}</h2>
+      <p>{{ selectedCapteurDetails?.description }}</p>
+
+      <div class="graph-container">
+        <div class="graph-content">
+          <canvas id="capteurChart"></canvas>
+          <div class="current-value">
+            <h4>Valeur actuelle</h4>
+            <p>{{ selectedCapteurDetails?.history[selectedCapteurDetails?.history.length - 1]?.value }} {{ selectedCapteurDetails?.unit }}</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Historique des données</h3>
+      <table class="history-table">
+        <thead>
+        <tr>
+          <th>Date</th>
+          <th>Valeur</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of selectedCapteurDetails?.history">
+          <td>{{ data.date }}</td>
+          <td>{{ data.value }} {{ selectedCapteurDetails?.unit }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
