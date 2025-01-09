@@ -16,6 +16,7 @@ type CapteurKey = 'temperature' | 'humidite' | 'bruit' | 'qualiteAir';
 export class AppComponent implements OnInit {
   title = 'quinoa-angular';
   isMenuOpen = false;
+  isSidebarCollapsed = false;
   selectedCapteur: CapteurKey | 'all' | null = null;
   selectedCapteurDetails: any = null;
   chart: Chart | null = null;
@@ -39,11 +40,15 @@ export class AppComponent implements OnInit {
       } else {
         this.updateGraph();
       }
-    }, 5000);
+    }, 5000); // Rafraîchissement des données toutes les 5 secondes
   }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   goToHome() {
@@ -61,7 +66,7 @@ export class AppComponent implements OnInit {
     this.selectedCapteur = 'all';
     this.selectedCapteurDetails = null;
     setTimeout(() => {
-      this.renderAllGraphs();
+      this.renderAllGraphs(); // Attendre que le DOM soit prêt
     }, 0);
   }
 
@@ -72,6 +77,10 @@ export class AppComponent implements OnInit {
     if (!ctx) return;
 
     const capteur = this.capteurs[this.selectedCapteur];
+    if (this.chart) {
+      this.chart.destroy(); // Détruire l'ancien graphique
+    }
+
     this.chart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -105,10 +114,18 @@ export class AppComponent implements OnInit {
 
   renderAllGraphs() {
     this.capteursKeys.forEach((capteurKey) => {
-      const ctx = (document.getElementById(`chart-${capteurKey}`) as HTMLCanvasElement)?.getContext('2d');
-      if (!ctx) return;
+      const canvasElement = document.getElementById(`chart-${capteurKey}`) as HTMLCanvasElement;
+      const ctx = canvasElement?.getContext('2d');
+      if (!ctx) {
+        console.error(`Canvas introuvable pour ${capteurKey}`);
+        return;
+      }
 
       const capteur = this.capteurs[capteurKey];
+      if (this.charts[capteurKey]) {
+        this.charts[capteurKey]?.destroy(); // Détruire l'ancien graphique pour éviter les doublons
+      }
+
       this.charts[capteurKey] = new Chart(ctx, {
         type: 'line',
         data: {

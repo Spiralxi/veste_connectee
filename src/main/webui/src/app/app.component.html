@@ -12,32 +12,37 @@
   </header>
 
   <div class="content-wrapper">
-    <aside class="sidebar">
-      <h3>Capteurs</h3>
+    <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+      <div class="sidebar-header">
+        <h3 *ngIf="!isSidebarCollapsed">Capteurs</h3>
+        <button class="toggle-sidebar-btn" (click)="toggleSidebar()">
+          <i [ngClass]="isSidebarCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
+        </button>
+      </div>
       <ul>
         <li>
           <a (click)="selectCapteur('temperature')" [class.active]="selectedCapteur === 'temperature'">
-            <i class="fas fa-thermometer-half"></i> Température
+            <i class="fas fa-thermometer-half"></i> <span *ngIf="!isSidebarCollapsed">Température</span>
           </a>
         </li>
         <li>
           <a (click)="selectCapteur('humidite')" [class.active]="selectedCapteur === 'humidite'">
-            <i class="fas fa-water"></i> Humidité
+            <i class="fas fa-water"></i> <span *ngIf="!isSidebarCollapsed">Humidité</span>
           </a>
         </li>
         <li>
           <a (click)="selectCapteur('bruit')" [class.active]="selectedCapteur === 'bruit'">
-            <i class="fas fa-volume-up"></i> Bruit
+            <i class="fas fa-volume-up"></i> <span *ngIf="!isSidebarCollapsed">Bruit</span>
           </a>
         </li>
         <li>
           <a (click)="selectCapteur('qualiteAir')" [class.active]="selectedCapteur === 'qualiteAir'">
-            <i class="fas fa-wind"></i> Qualité de l'air
+            <i class="fas fa-wind"></i> <span *ngIf="!isSidebarCollapsed">Qualité de l'air</span>
           </a>
         </li>
         <li>
           <a (click)="showAllGraphs()" [class.active]="selectedCapteur === 'all'">
-            <i class="fas fa-chart-line"></i> Tous les Capteurs
+            <i class="fas fa-chart-line"></i> <span *ngIf="!isSidebarCollapsed">Tous les Capteurs</span>
           </a>
         </li>
       </ul>
@@ -52,21 +57,33 @@
           <h3>Capteur de Température</h3>
           <p>Ce capteur mesure la température ambiante en temps réel.</p>
           <button>Voir le capteur</button>
+          <div class="current-value-home">
+            <h4>Valeur actuelle : {{ capteurs['temperature'].history[capteurs['temperature'].history.length - 1]?.value || '...' }} °C</h4>
+          </div>
         </div>
         <div class="card" (click)="selectCapteur('humidite')">
           <h3>Capteur d'Humidité</h3>
           <p>Ce capteur mesure le taux d'humidité relative.</p>
           <button>Voir le capteur</button>
+          <div class="current-value-home">
+            <h4>Valeur actuelle : {{ capteurs['humidite'].history[capteurs['humidite'].history.length - 1]?.value || '...' }} %</h4>
+          </div>
         </div>
         <div class="card" (click)="selectCapteur('bruit')">
           <h3>Capteur de Bruit</h3>
           <p>Ce capteur mesure le niveau sonore en décibels.</p>
           <button>Voir le capteur</button>
+          <div class="current-value-home">
+            <h4>Valeur actuelle : {{ capteurs['bruit'].history[capteurs['bruit'].history.length - 1]?.value || '...' }} dB</h4>
+          </div>
         </div>
         <div class="card" (click)="selectCapteur('qualiteAir')">
           <h3>Capteur de Qualité de l'Air</h3>
           <p>Ce capteur évalue la qualité de l'air.</p>
           <button>Voir le capteur</button>
+          <div class="current-value-home">
+            <h4>Valeur actuelle : {{ capteurs['qualiteAir'].history[capteurs['qualiteAir'].history.length - 1]?.value || '...' }} AQI</h4>
+          </div>
         </div>
       </div>
     </div>
@@ -103,15 +120,13 @@
       </table>
     </div>
 
-    <!-- Affichage de tous les graphiques -->
+    <!-- Graphiques de tous les capteurs -->
     <div class="content" *ngIf="selectedCapteur === 'all'">
-      <h2>Visualisation des Données de Tous les Capteurs</h2>
+      <h2>Graphiques de tous les capteurs</h2>
       <div class="all-graphs-container">
-        <div *ngFor="let capteur of capteursKeys" class="graph-wrapper">
-          <h3>{{ capteurs[capteur].title }}</h3>
-          <div class="graph-container">
-            <canvas [id]="'chart-' + capteur"></canvas>
-          </div>
+        <div *ngFor="let capteurKey of capteursKeys" class="graph-container all-capteurs">
+          <h3>{{ capteurs[capteurKey].title }}</h3>
+          <canvas id="chart-{{ capteurKey }}" class="all-capteurs"></canvas>
         </div>
       </div>
     </div>
