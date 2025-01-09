@@ -11,32 +11,32 @@
     </nav>
   </header>
 
-  <div class="content-wrapper">
+  <div class="content-wrapper" [class.collapsed]="isSidebarCollapsed">
     <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
       <div class="sidebar-header">
-        <h3 *ngIf="!isSidebarCollapsed">Capteurs</h3>
+        <h3 *ngIf="!isSidebarCollapsed" style="color: black;">Capteurs</h3>
         <button class="toggle-sidebar-btn" (click)="toggleSidebar()">
           <i [ngClass]="isSidebarCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
         </button>
       </div>
       <ul>
         <li>
-          <a (click)="selectCapteur('temperature')" [class.active]="selectedCapteur === 'temperature'">
+          <a (click)="selectCapteur('temperature')" [class.active]="selectedCapteur === 'temperature'" class="temperature">
             <i class="fas fa-thermometer-half"></i> <span *ngIf="!isSidebarCollapsed">Température</span>
           </a>
         </li>
         <li>
-          <a (click)="selectCapteur('humidite')" [class.active]="selectedCapteur === 'humidite'">
+          <a (click)="selectCapteur('humidite')" [class.active]="selectedCapteur === 'humidite'" class="humidite">
             <i class="fas fa-water"></i> <span *ngIf="!isSidebarCollapsed">Humidité</span>
           </a>
         </li>
         <li>
-          <a (click)="selectCapteur('bruit')" [class.active]="selectedCapteur === 'bruit'">
+          <a (click)="selectCapteur('bruit')" [class.active]="selectedCapteur === 'bruit'" class="bruit">
             <i class="fas fa-volume-up"></i> <span *ngIf="!isSidebarCollapsed">Bruit</span>
           </a>
         </li>
         <li>
-          <a (click)="selectCapteur('qualiteAir')" [class.active]="selectedCapteur === 'qualiteAir'">
+          <a (click)="selectCapteur('qualiteAir')" [class.active]="selectedCapteur === 'qualiteAir'" class="qualiteAir">
             <i class="fas fa-wind"></i> <span *ngIf="!isSidebarCollapsed">Qualité de l'air</span>
           </a>
         </li>
@@ -48,12 +48,11 @@
       </ul>
     </aside>
 
-    <!-- Page d'accueil -->
     <div class="content" *ngIf="!selectedCapteur">
       <h2>Bienvenue sur Quinoa Capteurs</h2>
       <p>Sélectionnez un capteur pour afficher ses données :</p>
       <div class="card-container">
-        <div class="card" (click)="selectCapteur('temperature')">
+        <div class="card temperature" (click)="selectCapteur('temperature')">
           <h3>Capteur de Température</h3>
           <p>Ce capteur mesure la température ambiante en temps réel.</p>
           <button>Voir le capteur</button>
@@ -61,7 +60,7 @@
             <h4>Valeur actuelle : {{ capteurs['temperature'].history[capteurs['temperature'].history.length - 1]?.value || '...' }} °C</h4>
           </div>
         </div>
-        <div class="card" (click)="selectCapteur('humidite')">
+        <div class="card humidite" (click)="selectCapteur('humidite')">
           <h3>Capteur d'Humidité</h3>
           <p>Ce capteur mesure le taux d'humidité relative.</p>
           <button>Voir le capteur</button>
@@ -69,7 +68,7 @@
             <h4>Valeur actuelle : {{ capteurs['humidite'].history[capteurs['humidite'].history.length - 1]?.value || '...' }} %</h4>
           </div>
         </div>
-        <div class="card" (click)="selectCapteur('bruit')">
+        <div class="card bruit" (click)="selectCapteur('bruit')">
           <h3>Capteur de Bruit</h3>
           <p>Ce capteur mesure le niveau sonore en décibels.</p>
           <button>Voir le capteur</button>
@@ -77,7 +76,7 @@
             <h4>Valeur actuelle : {{ capteurs['bruit'].history[capteurs['bruit'].history.length - 1]?.value || '...' }} dB</h4>
           </div>
         </div>
-        <div class="card" (click)="selectCapteur('qualiteAir')">
+        <div class="card qualiteAir" (click)="selectCapteur('qualiteAir')">
           <h3>Capteur de Qualité de l'Air</h3>
           <p>Ce capteur évalue la qualité de l'air.</p>
           <button>Voir le capteur</button>
@@ -88,11 +87,9 @@
       </div>
     </div>
 
-    <!-- Détails du capteur sélectionné -->
     <div class="content" *ngIf="selectedCapteur && selectedCapteur !== 'all'">
       <h2>{{ selectedCapteurDetails?.title }}</h2>
       <p>{{ selectedCapteurDetails?.description }}</p>
-
       <div class="graph-container">
         <div class="graph-content">
           <canvas id="capteurChart"></canvas>
@@ -102,9 +99,8 @@
           </div>
         </div>
       </div>
-
       <h3>Historique des données</h3>
-      <table class="history-table">
+      <table class="history-table" [ngClass]="{'temperature': selectedCapteur === 'temperature', 'humidite': selectedCapteur === 'humidite', 'bruit': selectedCapteur === 'bruit', 'qualiteAir': selectedCapteur === 'qualiteAir'}">
         <thead>
         <tr>
           <th>Date</th>
@@ -120,7 +116,6 @@
       </table>
     </div>
 
-    <!-- Graphiques de tous les capteurs -->
     <div class="content" *ngIf="selectedCapteur === 'all'">
       <h2>Graphiques de tous les capteurs</h2>
       <div class="all-graphs-container">

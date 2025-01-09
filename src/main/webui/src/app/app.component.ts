@@ -30,6 +30,13 @@ export class AppComponent implements OnInit {
     qualiteAir: { title: 'Capteur de Qualité de l\'Air', description: 'Ce capteur évalue la qualité de l\'air.', history: [], unit: 'AQI', min: 0, max: 100 },
   };
 
+  colors: Record<CapteurKey, string> = {
+    temperature: '#ff7043', // Orange
+    humidite: '#64b5f6',    // Bleu clair
+    bruit: '#81c784',       // Vert
+    qualiteAir: '#fbc02d',   // Jaune
+  };
+
   maxPoints = 50;
 
   ngOnInit(): void {
@@ -89,8 +96,8 @@ export class AppComponent implements OnInit {
           {
             label: capteur.title,
             data: capteur.history.map((point: DataPoint) => point.value),
-            backgroundColor: 'rgba(75,192,192,0.2)',
-            borderColor: 'rgba(75,192,192,1)',
+            backgroundColor: this.colors[this.selectedCapteur],
+            borderColor: this.colors[this.selectedCapteur],
             borderWidth: 2,
             fill: 'origin',
             tension: 0.4,
@@ -134,8 +141,8 @@ export class AppComponent implements OnInit {
             {
               label: capteur.title,
               data: capteur.history.map((point: DataPoint) => point.value),
-              backgroundColor: 'rgba(75,192,192,0.2)',
-              borderColor: 'rgba(75,192,192,1)',
+              backgroundColor: this.colors[capteurKey],
+              borderColor: this.colors[capteurKey],
               borderWidth: 2,
               fill: 'origin',
               tension: 0.4,
