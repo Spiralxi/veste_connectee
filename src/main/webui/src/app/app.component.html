@@ -35,6 +35,11 @@
             <i class="fas fa-wind"></i> Qualité de l'air
           </a>
         </li>
+        <li>
+          <a (click)="showAllGraphs()" [class.active]="selectedCapteur === 'all'">
+            <i class="fas fa-chart-line"></i> Tous les Capteurs
+          </a>
+        </li>
       </ul>
     </aside>
 
@@ -67,7 +72,7 @@
     </div>
 
     <!-- Détails du capteur sélectionné -->
-    <div class="content" *ngIf="selectedCapteur">
+    <div class="content" *ngIf="selectedCapteur && selectedCapteur !== 'all'">
       <h2>{{ selectedCapteurDetails?.title }}</h2>
       <p>{{ selectedCapteurDetails?.description }}</p>
 
@@ -96,6 +101,19 @@
         </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Affichage de tous les graphiques -->
+    <div class="content" *ngIf="selectedCapteur === 'all'">
+      <h2>Visualisation des Données de Tous les Capteurs</h2>
+      <div class="all-graphs-container">
+        <div *ngFor="let capteur of capteursKeys" class="graph-wrapper">
+          <h3>{{ capteurs[capteur].title }}</h3>
+          <div class="graph-container">
+            <canvas [id]="'chart-' + capteur"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
