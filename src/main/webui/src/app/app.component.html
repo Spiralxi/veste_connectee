@@ -61,8 +61,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let data of selectedCapteurDetails?.history">
-          <td>{{ data.date }}</td>
+        <tr *ngFor="let data of selectedCapteurDetails?.history.slice().reverse()">
+          <!-- Affichage de la date et l'heure formatées -->
+          <td>{{ data.time | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
           <td>{{ data.value }} {{ selectedCapteurDetails?.unit }}</td>
         </tr>
         </tbody>
