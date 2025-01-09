@@ -69,7 +69,8 @@ export class AppComponent implements OnInit {
   }
 
   goToHome() {
-    console.log('Retour à l\'accueil');
+    this.selectedCapteur = null; // Retour à l'accueil
+    this.selectedCapteurDetails = null; // Réinitialiser les détails
   }
 
   selectCapteur(capteur: CapteurKey) {
@@ -77,9 +78,8 @@ export class AppComponent implements OnInit {
     this.selectedCapteurDetails = this.capteurs[capteur]; // Récupération des détails du capteur
 
     if (this.chart) {
-      // Si le graphique existe, mettre à jour le dataset
-      this.chart.data.datasets[0].label = this.selectedCapteurDetails.title; // Changer le label du dataset
-      this.updateGraph(); // Mettre à jour les données et labels
+      this.chart.data.datasets[0].label = this.selectedCapteurDetails.title;
+      this.updateGraph(); // Mettre à jour les données du graphique
     } else {
       this.renderGraph(); // Créer le graphique si ce n'est pas encore fait
     }
@@ -110,7 +110,7 @@ export class AppComponent implements OnInit {
       },
       options: {
         responsive: true,
-        animation: false, // Désactiver les animations globales
+        animation: false,
         plugins: {
           legend: { display: true },
         },
@@ -148,12 +148,10 @@ export class AppComponent implements OnInit {
       const labels = capteurData.history.map((point: DataPoint) => point.time.toLocaleTimeString());
       const data = capteurData.history.map((point: DataPoint) => point.value);
 
-      // Mise à jour des labels et des données
       this.chart.data.labels = labels;
       this.chart.data.datasets[0].data = data;
-      this.chart.data.datasets[0].label = capteurData.title; // Mise à jour du label du dataset
 
-      this.chart.update('none'); // Mettre à jour sans réinitialiser l'animation
+      this.chart.update('none'); // Mise à jour
     }
   }
 

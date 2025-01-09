@@ -5,7 +5,7 @@
       <i class="fas fa-bars"></i>
     </div>
     <nav class="nav-links">
-      <a href="#"><i class="fas fa-home"></i> Accueil</a>
+      <a (click)="goToHome()"><i class="fas fa-home"></i> Accueil</a>
       <a href="#"><i class="fas fa-info-circle"></i> À propos</a>
       <a href="#"><i class="fas fa-envelope"></i> Contact</a>
     </nav>
@@ -38,6 +38,35 @@
       </ul>
     </aside>
 
+    <!-- Page d'accueil -->
+    <div class="content" *ngIf="!selectedCapteur">
+      <h2>Bienvenue sur Quinoa Capteurs</h2>
+      <p>Sélectionnez un capteur pour afficher ses données :</p>
+      <div class="card-container">
+        <div class="card" (click)="selectCapteur('temperature')">
+          <h3>Capteur de Température</h3>
+          <p>Ce capteur mesure la température ambiante en temps réel.</p>
+          <button>Voir le capteur</button>
+        </div>
+        <div class="card" (click)="selectCapteur('humidite')">
+          <h3>Capteur d'Humidité</h3>
+          <p>Ce capteur mesure le taux d'humidité relative.</p>
+          <button>Voir le capteur</button>
+        </div>
+        <div class="card" (click)="selectCapteur('bruit')">
+          <h3>Capteur de Bruit</h3>
+          <p>Ce capteur mesure le niveau sonore en décibels.</p>
+          <button>Voir le capteur</button>
+        </div>
+        <div class="card" (click)="selectCapteur('qualiteAir')">
+          <h3>Capteur de Qualité de l'Air</h3>
+          <p>Ce capteur évalue la qualité de l'air.</p>
+          <button>Voir le capteur</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Détails du capteur sélectionné -->
     <div class="content" *ngIf="selectedCapteur">
       <h2>{{ selectedCapteurDetails?.title }}</h2>
       <p>{{ selectedCapteurDetails?.description }}</p>
@@ -62,7 +91,6 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of selectedCapteurDetails?.history.slice().reverse()">
-          <!-- Affichage de la date et l'heure formatées -->
           <td>{{ data.time | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
           <td>{{ data.value }} {{ selectedCapteurDetails?.unit }}</td>
         </tr>
