@@ -14,4 +14,3 @@ public class Capteur extends PanacheEntity {
 
     public double valeur;
 }
-

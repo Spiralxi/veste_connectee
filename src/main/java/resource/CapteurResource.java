@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +27,14 @@ public class CapteurResource {
 
     @POST
     @Transactional
-    public Capteur createCapteur(Capteur capteur) {
+    public Response createCapteur(Capteur capteur) {
+        // Validation des données
+        if (capteur.emplacement == null || capteur.emplacement.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Le champ 'emplacement' est obligatoire.")
+                    .build();
+        }
+
         capteur.persist();
         try {
             // Créer une map pour les données du capteur
@@ -45,17 +53,27 @@ public class CapteurResource {
             e.printStackTrace();
         }
 
-        return capteur;
+        return Response.ok(capteur).build();
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Capteur updateCapteur(@PathParam("id") Long id, Capteur updatedCapteur) {
+    public Response updateCapteur(@PathParam("id") Long id, Capteur updatedCapteur) {
         Capteur capteur = Capteur.findById(id);
         if (capteur == null) {
-            throw new WebApplicationException("Capteur avec l'ID " + id + " non trouvé.", 404);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Capteur avec l'ID " + id + " non trouvé.")
+                    .build();
         }
+
+        // Validation des données
+        if (updatedCapteur.emplacement == null || updatedCapteur.emplacement.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Le champ 'emplacement' est obligatoire.")
+                    .build();
+        }
+
         capteur.type = updatedCapteur.type;
         capteur.emplacement = updatedCapteur.emplacement;
         capteur.valeur = updatedCapteur.valeur;
@@ -77,16 +95,18 @@ public class CapteurResource {
             e.printStackTrace();
         }
 
-        return capteur;
+        return Response.ok(capteur).build();
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
-    public void deleteCapteur(@PathParam("id") Long id) {
+    public Response deleteCapteur(@PathParam("id") Long id) {
         Capteur capteur = Capteur.findById(id);
         if (capteur == null) {
-            throw new WebApplicationException("Capteur avec l'ID " + id + " non trouvé.", 404);
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Capteur avec l'ID " + id + " non trouvé.")
+                    .build();
         }
         capteur.delete();
 
@@ -97,5 +117,7 @@ public class CapteurResource {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return Response.noContent().build();
     }
 }
