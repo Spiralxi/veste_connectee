@@ -41,6 +41,11 @@
           </a>
         </li>
         <li>
+          <a (click)="selectCapteur('ecg')" [class.active]="selectedCapteur === 'ecg'" class="ecg">
+            <i class="fas fa-heartbeat"></i> <span *ngIf="!isSidebarCollapsed">ECG</span>
+          </a>
+        </li>
+        <li>
           <a (click)="showAllGraphs()" [class.active]="selectedCapteur === 'all'">
             <i class="fas fa-chart-line"></i> <span *ngIf="!isSidebarCollapsed">Tous les Capteurs</span>
           </a>
@@ -84,9 +89,18 @@
             <h4>Valeur actuelle : {{ capteurs['qualiteAir'].history[capteurs['qualiteAir'].history.length - 1]?.value || '...' }} AQI</h4>
           </div>
         </div>
+        <div class="card ecg" (click)="selectCapteur('ecg')">
+          <h3>Capteur ECG</h3>
+          <p>Ce capteur mesure l'activité cardiaque en temps réel.</p>
+          <button>Voir le capteur</button>
+          <div class="current-value-home">
+            <h4>Valeur actuelle : {{ capteurs['ecg'].history[capteurs['ecg'].history.length - 1]?.value || '...' }} mV</h4>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Détails du capteur -->
     <div class="content" *ngIf="selectedCapteur && selectedCapteur !== 'all'">
       <h2>{{ selectedCapteurDetails?.title }}</h2>
       <p>{{ selectedCapteurDetails?.description }}</p>
@@ -100,7 +114,7 @@
         </div>
       </div>
       <h3>Historique des données</h3>
-      <table class="history-table" [ngClass]="{'temperature': selectedCapteur === 'temperature', 'humidite': selectedCapteur === 'humidite', 'bruit': selectedCapteur === 'bruit', 'qualiteAir': selectedCapteur === 'qualiteAir'}">
+      <table class="history-table" [ngClass]="{'temperature': selectedCapteur === 'temperature', 'humidite': selectedCapteur === 'humidite', 'bruit': selectedCapteur === 'bruit', 'qualiteAir': selectedCapteur === 'qualiteAir', 'ecg': selectedCapteur === 'ecg'}">
         <thead>
         <tr>
           <th>Date</th>
@@ -116,6 +130,7 @@
       </table>
     </div>
 
+    <!-- Graphiques de tous les capteurs -->
     <div class="content" *ngIf="selectedCapteur === 'all'">
       <h2>Graphiques de tous les capteurs</h2>
       <div class="all-graphs-container">

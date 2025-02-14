@@ -6,7 +6,7 @@ interface DataPoint {
   value: number;
 }
 
-type CapteurKey = 'temperature' | 'humidite' | 'bruit' | 'qualiteAir';
+type CapteurKey = 'temperature' | 'humidite' | 'bruit' | 'qualiteAir' | 'ecg';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   selectedCapteur: CapteurKey | 'all' | null = null;
   selectedCapteurDetails: any = null;
   chart: Chart | null = null;
-  capteursKeys: CapteurKey[] = ['temperature', 'humidite', 'bruit', 'qualiteAir'];
+  capteursKeys: CapteurKey[] = ['temperature', 'humidite', 'bruit', 'qualiteAir', 'ecg'];
   charts: Record<string, Chart | null> = {};
 
   capteurs: Record<CapteurKey, { title: string; description: string; history: DataPoint[]; unit: string; min: number; max: number }> = {
@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
     humidite: { title: 'Capteur d\'Humidité', description: 'Ce capteur mesure le taux d\'humidité relative.', history: [], unit: '%', min: 30, max: 70 },
     bruit: { title: 'Capteur de Bruit', description: 'Ce capteur mesure le niveau sonore en décibels.', history: [], unit: 'dB', min: 40, max: 100 },
     qualiteAir: { title: 'Capteur de Qualité de l\'Air', description: 'Ce capteur évalue la qualité de l\'air.', history: [], unit: 'AQI', min: 0, max: 100 },
+    ecg: { title: 'Capteur ECG', description: 'Ce capteur mesure l\'activité cardiaque en temps réel.', history: [], unit: 'mV', min: -2, max: 2 },
   };
 
   colors: Record<CapteurKey, string> = {
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit {
     humidite: '#64b5f6',    // Bleu clair
     bruit: '#81c784',       // Vert
     qualiteAir: '#fbc02d',   // Jaune
+    ecg: '#f50057',         // Rose pour ECG
   };
 
   maxPoints = 50;
@@ -202,6 +204,6 @@ export class AppComponent implements OnInit {
   }
 
   private getRandomValue(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return parseFloat((Math.random() * (max - min) + min).toFixed(2)); // Conversion en nombre
   }
 }
