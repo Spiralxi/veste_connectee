@@ -9,9 +9,10 @@ interface Capteur {
 }
 
 @Component({
-  selector: 'app-capteur',
-  templateUrl: './capteur.component.html',
-  styleUrls: ['./capteur.component.css']
+    selector: 'app-capteur',
+    templateUrl: './capteur.component.html',
+    styleUrls: ['./capteur.component.css'],
+    standalone: false
 })
 export class CapteurComponent implements OnInit {
 
