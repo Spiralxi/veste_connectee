@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "quinoa-angular:build:production"
+              "buildTarget": "quinoa-angular:build:production"
             },
             "development": {
-              "browserTarget": "quinoa-angular:build:development"
+              "buildTarget": "quinoa-angular:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -71,7 +71,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "quinoa-angular:build"
+            "buildTarget": "quinoa-angular:build"
           }
         },
         "test": {
