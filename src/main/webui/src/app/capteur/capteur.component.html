@@ -4,10 +4,34 @@
     <strong>Type:</strong> {{ capteur.type }} |
     <strong>Emplacement:</strong> {{ capteur.emplacement }} |
     <strong>Valeur:</strong> {{ capteur.valeur }}
-    <span *ngIf="capteur.type === 'Température'">°C</span>
-    <span *ngIf="capteur.type === 'Humidité'">%</span>
-    <span *ngIf="capteur.type === 'Qualité de l\'air'">%</span>
-    <span *ngIf="capteur.type === 'Bruit'">dB</span>
-    <span *ngIf="capteur.type === 'Electrocardiogramme'"> BPM</span>
   </li>
 </ul>
+
+<!-- 📊 Graphiques des capteurs -->
+<div *ngFor="let capteur of [
+  { nom: 'Température', data: lineChartDataTemperature, unite: '°C' },
+  { nom: 'Humidité', data: lineChartDataHumidite, unite: '%' },
+  { nom: 'Qualité de l\'air', data: lineChartDataQualiteAir, unite: '%' },
+  { nom: 'Bruit', data: lineChartDataBruit, unite: 'dB' },
+  { nom: 'Electrocardiogramme', data: lineChartDataECG, unite: 'BPM' }
+]" style="width: 80%; margin: auto; margin-top: 20px;">
+
+  <div [style.color]="getCouleurAlerte(capteur.nom, derniereValeurs[capteur.nom])">
+    <strong>{{ capteur.nom }} :</strong> {{ derniereValeurs[capteur.nom] }} {{ capteur.unite }}
+  </div>
+
+  <ngx-charts-line-chart
+    [view]="[700, 400]"
+    [scheme]="'cool'"
+    [results]="capteur.data"
+    [legend]="true"
+    [xAxis]="true"
+    [yAxis]="true"
+    [showXAxisLabel]="true"
+    [showYAxisLabel]="true"
+    [xAxisLabel]="'Temps'"
+    [yAxisLabel]="capteur.nom + ' (' + capteur.unite + ')'"
+    [autoScale]="true"
+    [animations]="true">
+  </ngx-charts-line-chart>
+</div>
