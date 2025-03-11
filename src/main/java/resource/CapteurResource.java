@@ -10,6 +10,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 @Path("/capteurs")
 @Produces(MediaType.APPLICATION_JSON)
@@ -27,6 +28,7 @@ public class CapteurResource {
     @POST
     @Transactional
     public Capteur createCapteur(Capteur capteur) {
+        capteur.timestamp = LocalDateTime.now(); // Ajout du timestamp
         capteur.persist();
         try {
             // Créer une map pour les données du capteur
@@ -44,7 +46,6 @@ public class CapteurResource {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return capteur;
     }
 
@@ -76,7 +77,6 @@ public class CapteurResource {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return capteur;
     }
 
@@ -97,5 +97,52 @@ public class CapteurResource {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @GET
+    @Path("/historique/ecg")
+    public List<Capteur> getHistoriqueECG() {
+        // 1) On filtre par type = 'Electrocardiogramme'
+        // 2) On trie par timestamp DESC pour avoir les plus récents en premier
+        // 3) On limite la requête aux 10 enregistrements les plus récents
+        return Capteur.find("type = ?1 ORDER BY timestamp DESC", "Electrocardiogramme")
+                .page(0, 10)
+                .list();
+    }
+
+    // Historique Température (déjà ajouté)
+    @GET
+    @Path("/historique/temperature")
+    public List<Capteur> getHistoriqueTemperature() {
+        return Capteur.find("type = ?1 ORDER BY timestamp DESC", "Température")
+                .page(0, 10)
+                .list();
+    }
+
+    // Historique Humidité (nouveau)
+    @GET
+    @Path("/historique/humidite")
+    public List<Capteur> getHistoriqueHumidite() {
+        return Capteur.find("type = ?1 ORDER BY timestamp DESC", "Humidité")
+                .page(0, 10)
+                .list();
+    }
+
+    // Historique Qualité de l'air (nouveau)
+    @GET
+    @Path("/historique/qualiteair")
+    public List<Capteur> getHistoriqueQualiteAir() {
+        return Capteur.find("type = ?1 ORDER BY timestamp DESC", "Qualité de l'air")
+                .page(0, 10)
+                .list();
+    }
+
+    // Historique Bruit (nouveau)
+    @GET
+    @Path("/historique/bruit")
+    public List<Capteur> getHistoriqueBruit() {
+        return Capteur.find("type = ?1 ORDER BY timestamp DESC", "Bruit")
+                .page(0, 10)
+                .list();
     }
 }

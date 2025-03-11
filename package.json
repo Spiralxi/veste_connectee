@@ -1,6 +1,13 @@
 {
   "dependencies": {
     "@stomp/stompjs": "^7.0.0",
+    "chart.js": "^4.4.8",
+    "d3-shape": "^3.2.0",
+    "ng2-charts": "^8.0.0",
     "sockjs-client": "^1.6.1"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.2.1",
+    "@types/d3-shape": "^3.1.7"
   }
 }
